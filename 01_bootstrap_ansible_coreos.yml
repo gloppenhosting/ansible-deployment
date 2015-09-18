@@ -1,0 +1,5 @@
+- name: Bootstrap CoreOS hosts for Ansible use
+  hosts: coreos
+  gather_facts: False
+  roles:
+    - defunctzombie.coreos-bootstrap

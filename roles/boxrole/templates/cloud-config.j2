@@ -1,0 +1,32 @@
+#cloud-config
+ssh_authorized_keys:
+ {% for key in public_ssh_keys %}
+  - {{ key }}
+ {% endfor %}
+
+coreos:
+  update:
+    reboot-strategy: "off"
+
+  etcd2:
+    discovery: {{ coreos_discovery }}
+    advertise-client-urls: "http://{{ ansible_default_ipv4.address }}:2379"
+    initial-advertise-peer-urls: "http://{{ ansible_default_ipv4.address }}:2380"
+    listen-client-urls: "http://0.0.0.0:2379,http://0.0.0.0:4001"
+    listen-peer-urls: "http://{{ ansible_default_ipv4.address }}:2380,http://{{ ansible_default_ipv4.address }}:7001"
+  fleet:
+    public-ip: {{ ansible_default_ipv4.address }}
+    metadata: boxrole={{ box_role }}
+  locksmith:
+      endpoint: "http://{{ ansible_default_ipv4.address }}:2379"
+  units:
+    - name: etcd2.service
+      command: restart
+    - name: fleet.service
+      command: restart
+    - name: update-engine.service
+      command: stop
+      mask: true
+    - name: locksmithd.service
+      command: stop
+      mask: true

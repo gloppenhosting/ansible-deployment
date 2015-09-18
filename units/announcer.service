@@ -1,0 +1,17 @@
+[Unit]
+Description=Announcer
+After=asterisk.service
+Requires=asterisk.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=-/usr/bin/docker kill announcer
+ExecStartPre=-/usr/bin/docker rm announcer
+ExecStartPre=/usr/bin/docker pull gloppenhosting/kamailio-etcd-dispatcher
+ExecStart=/bin/sh -c "/usr/bin/docker run --name announcer -t gloppenhosting/kamailio-etcd-dispatcher --announce --announceip $(ifconfig | grep -A1 {{ ansible_default_ipv4.interface }} | grep -v {{ ansible_default_ipv4.interface }} | awk '{print $2}') --etcdhost 172.17.42.1 --announcename $(cat /etc/hostname)"
+ExecStop=/usr/bin/docker stop announcer
+
+[X-Fleet]
+MachineMetadata=boxrole=asterisk
+Global=True

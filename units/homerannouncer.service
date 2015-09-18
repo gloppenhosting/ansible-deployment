@@ -1,0 +1,14 @@
+[Unit]
+Description=Announce Homer IP
+Requires=captureserver.service
+After=captureserver.service
+
+[Service]
+Restart=always
+ExecStart=/bin/sh -c "while true; do if [ -f /tmp/.stop-announce ]; then rm /tmp/.stop-announce; break; fi; etcdctl set /captureserver $(ifconfig | grep -A1 {{ ansible_default_ipv4.interface }} | grep -v {{ ansible_default_ipv4.interface }} | awk '{print $2}') --ttl 60; sleep 45; done"
+ExecStop=/usr/bin/touch /tmp/.stop-announce
+ExecStop=/usr/bin/etcdctl rm /captureserver
+
+[X-Fleet]
+MachineMetadata=boxrole=homer
+Global=True

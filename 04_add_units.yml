@@ -1,0 +1,53 @@
+---
+- name: Update fleet units in cluster
+  hosts: coreos
+  sudo: true
+  tasks:
+    - name: Ensure /home/core/units is cleaned
+      file: path=/home/core/units state=absent
+
+    - name: Ensure /home/core/units exists
+      file: path=/home/core/units state=directory
+
+    - name: Copy units to server using template
+      template: src={{ item }} dest=/home/core/units/{{ item | basename }}
+      with_fileglob:
+       - units/*
+
+- name: Cleanup all units in cluster
+  hosts: leader
+  sudo: true
+  tasks:
+
+    - name: Destroy existing base unit files
+      command: "fleetctl destroy {{ item | basename }}"
+      with_fileglob:
+        - units/*
+      args:
+        chdir: /home/core/units
+
+- name: Cleanup all docker containers in cluster
+  hosts: coreos
+  sudo: true
+  tasks:
+    - name: Kill all containers
+      shell: /bin/bash /home/core/clean.sh
+
+- name: Deploy and add fleet in cluster
+  hosts: leader
+  sudo: true
+
+  tasks:
+    - name: Load new unit files
+      command: "fleetctl submit {{ item | basename }}"
+      with_fileglob:
+       - units/*
+      args:
+        chdir: /home/core/units
+
+    - name: Spin up instances
+      command: "fleetctl start {{ item | basename }}"
+      with_fileglob:
+        - units/*
+      args:
+        chdir: /home/core/units

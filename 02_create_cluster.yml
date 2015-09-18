@@ -1,0 +1,36 @@
+---
+  - name: Spin up a cluster of CoreOS boxs for leadership
+    hosts: leader
+    vars_files:
+      - ["vars/coreos.yml"]
+    sudo: true
+
+    roles:
+      - { role: boxrole, box_role: leader }
+
+  - name: Spin up a cluster of CoreOS boxs for kamailio
+    hosts: kamailio
+    vars_files:
+      - ["vars/coreos.yml"]
+    sudo: true
+
+    roles:
+      - { role: boxrole, box_role: kamailio }
+
+  - name: Spin up a cluster of CoreOS boxs for asterisk
+    hosts: asterisk
+    vars_files:
+      - ["vars/coreos.yml"]
+    sudo: true
+
+    roles:
+      - { role: boxrole, box_role: asterisk }
+
+  - name: Spin up a cluster of CoreOS boxs for homer
+    hosts: homer
+    vars_files:
+      - ["vars/coreos.yml"]
+    sudo: true
+
+    roles:
+      - { role: boxrole, box_role: homer }

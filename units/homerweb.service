@@ -1,0 +1,17 @@
+[Unit]
+Description=Announce Homer IP
+Requires=captureserver.service
+After=captureserver.service
+
+[Service]
+TimeoutStartSec=45
+Restart=always
+ExecStartPre=-/usr/bin/docker kill homerweb
+ExecStartPre=-/usr/bin/docker rm homerweb
+ExecStartPre=/usr/bin/docker pull gloppenhosting/homer-webapp
+ExecStart=/usr/bin/docker run --name homerweb -p 80:80 --link mysql:mysql -t gloppenhosting/homer-webapp
+ExecStop=/usr/bin/docker stop homerweb
+
+[X-Fleet]
+MachineMetadata=boxrole=homer
+Global=True

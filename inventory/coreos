@@ -1,0 +1,63 @@
+# ---------------------- Inventory
+coreos1 ansible_ssh_host=213.150.61.166 ansible_ssh_port=4000
+coreos2 ansible_ssh_host=213.150.61.166 ansible_ssh_port=4001
+coreos3 ansible_ssh_host=213.150.61.166 ansible_ssh_port=4002
+coreos4 ansible_ssh_host=213.150.61.166 ansible_ssh_port=4003
+coreos5 ansible_ssh_host=213.150.61.166 ansible_ssh_port=4004
+coreos6 ansible_ssh_host=213.150.61.166 ansible_ssh_port=4005
+
+# ------------------------ Keep alive d.
+[keepalive_leader]
+coreos1
+
+[keepalive_follower]
+coreos2
+
+# Each box references it's partners IP. As opposed to it's own.
+[keepalive_leader:vars]
+keepalived_priority=101
+
+[keepalive_follower:vars]
+keepalived_priority=100
+
+# ------------------------ All CoreOS machines
+
+# - All the boxes.
+[coreos]
+coreos1
+coreos2
+coreos3
+coreos4
+coreos5
+coreos6
+
+[coreos:vars]
+ansible_ssh_user=core
+ansible_python_interpreter="PATH=/home/core/bin:$PATH python"
+
+# - The host you send fleetctl commands to.
+[leader]
+coreos6
+
+# ------------------------ Kamailio boxes
+[kamailio]
+coreos1
+coreos2
+
+[kamailio:vars]
+box_role=kamailio
+
+# ------------------------ Asterisk Boxes
+[asterisk]
+coreos3
+coreos4
+
+[asterisk:vars]
+box_role=asterisk
+
+# ------------------------ Homer Boxes
+[homer]
+coreos5
+
+[homer:vars]
+box_role=homer

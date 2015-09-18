@@ -1,0 +1,24 @@
+[Unit]
+Description=keepalived
+After=kamailio.service
+Requires=kamailio.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=-/usr/bin/docker kill keepalived
+ExecStartPre=-/usr/bin/docker rm keepalived
+ExecStartPre=/usr/bin/docker pull gloppenhosting/keepalived
+ExecStartPre=/bin/sh -c "/usr/sbin/sysctl -w net.ipv4.ip_nonlocal_bind=1"
+ExecStart=/bin/sh -c "/usr/bin/docker run \
+    -v /etc/keepalived/keepalived.conf:/etc/keepalived/keepalived.conf \
+    --name=keepalived \
+    --privileged=true \
+    --net=host \
+    -t gloppenhosting/keepalived \
+    /usr/sbin/keepalived -f /etc/keepalived/keepalived.conf --dont-fork --log-console"
+ExecStop=/usr/bin/docker stop keepalived
+
+[X-Fleet]
+MachineMetadata=boxrole=kamailio
+Global=True
