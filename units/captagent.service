@@ -1,19 +1,19 @@
 [Unit]
 Description=Homer Capture Agent
-Requires=asterisk.service
+BindsTo=asterisk.service
 After=asterisk.service
+Requires=homerannouncer.service
+After=homerannouncer.service
 
 [Service]
-TimeoutStartSec=60
 Restart=always
+RestartSec=15s
+TimeoutStartSec=0
+
 ExecStartPre=-/usr/bin/docker kill captagent
 ExecStartPre=-/usr/bin/docker rm captagent
 ExecStartPre=/usr/bin/docker pull gloppenhosting/homer-captagent
-ExecStart=/bin/sh -c "/usr/bin/docker run \
-    --net=host \
-    --name captagent \
-    -t gloppenhosting/homer-captagent \
-    -d eth0 -h $(etcdctl get /captureserver) -p 9060 -i 2001"
+ExecStart=/bin/sh -c "/usr/bin/docker run --net=host --name captagent -t gloppenhosting/homer-captagent -d {{ ansible_default_ipv4.interface }} -h $(etcdctl get /captureserver) -p 9060 -i 2001"
 ExecStop=/usr/bin/docker stop captagent
 
 [X-Fleet]

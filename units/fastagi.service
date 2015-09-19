@@ -1,11 +1,13 @@
 [Unit]
-Description=FastAGI
+Description=FastAGI for asterisk
 After=docker.service
 Requires=docker.service
 
 [Service]
-TimeoutStartSec=15
 Restart=always
+RestartSec=15s
+TimeoutStartSec=0
+
 ExecStartPre=-/usr/bin/docker kill fastagi
 ExecStartPre=-/usr/bin/docker rm fastagi
 ExecStartPre=/usr/bin/docker pull gloppenhosting/fastagi

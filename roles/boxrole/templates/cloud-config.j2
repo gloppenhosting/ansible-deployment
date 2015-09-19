@@ -17,6 +17,7 @@ coreos:
   fleet:
     public-ip: {{ ansible_default_ipv4.address }}
     metadata: boxrole={{ box_role }}
+    etcd_request_timeout: 3.0
   locksmith:
       endpoint: "http://{{ ansible_default_ipv4.address }}:2379"
   units:
@@ -26,7 +27,7 @@ coreos:
       command: restart
     - name: update-engine.service
       command: stop
-      mask: true
+      enabled: false
     - name: locksmithd.service
       command: stop
       mask: true

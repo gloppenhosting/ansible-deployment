@@ -31,12 +31,3 @@
 
       - name: Ensure /etc/kamailio exists
         file: path=/etc/kamailio state=directory
-
-      - name: Copy kamailio config
-        copy: src=config/kamailio.cfg dest=/etc/kamailio/kamailio.cfg
-
-      - name: Ensure /etc/keepalived exists
-        file: path=/etc/keepalived state=directory
-
-      - name: Template keepalived.conf
-        template: src=config/keepalived.conf.j2 dest=/etc/keepalived/keepalived.conf

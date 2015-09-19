@@ -4,17 +4,17 @@ After=docker.service
 Requires=docker.service
 
 [Service]
-TimeoutStartSec=60
 Restart=always
+RestartSec=15s
+TimeoutStartSec=0
+
 ExecStartPre=-/usr/bin/docker kill asterisk
 ExecStartPre=-/usr/bin/docker rm asterisk
-ExecStartPre=/usr/bin/docker pull gloppenhosting/asterisk
+ExecStartPre=/usr/bin/docker pull gloppenhosting/asterisk13
 ExecStart=/usr/bin/docker run \
     -v /etc/asterisk/sip.conf:/etc/asterisk/sip.conf \
     -v /etc/asterisk/extensions.conf:/etc/asterisk/extensions.conf \
-    --name asterisk \
-    --net=host \
-    -t gloppenhosting/asterisk
+    --name asterisk --net=host -t gloppenhosting/asterisk13
 ExecStop=/usr/bin/docker stop asterisk
 
 [X-Fleet]

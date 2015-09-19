@@ -5,11 +5,14 @@
   - name: Template clean for boxrole
     template: "src=clean.sh.j2 dest=/home/core/clean.sh mode=0770"
 
-  - name: Ensure /var/lib/coreos-install exists
-    file: path=/var/lib/coreos-install state=directory
+  #- name: Kill all containers
+  #  shell: /bin/bash /home/core/clean.sh
 
-  - name: Template cloud-config to permanent user_data
-    template: "src=cloud-config.j2 dest=/var/lib/coreos-install/user_data"
+  #- name: Ensure /var/lib/coreos-install exists
+  #  file: path=/var/lib/coreos-install state=directory
+
+  #- name: Template cloud-config to permanent user_data
+  #  template: "src=cloud-config.j2 dest=/var/lib/coreos-install/user_data"
 
   - name: Initialize coreos with cloud config
     shell: coreos-cloudinit --from-file=/home/core/cloud-config.yaml

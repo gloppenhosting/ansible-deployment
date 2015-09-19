@@ -1,7 +1,9 @@
 ---
 - name: Update fleet units in cluster
-  hosts: coreos
+  hosts: leader
   sudo: true
+  vars_files:
+      - ["vars/coreos.yml"]
   tasks:
     - name: Ensure /home/core/units is cleaned
       file: path=/home/core/units state=absent
@@ -19,12 +21,15 @@
   sudo: true
   tasks:
 
+    - name: Stop existing base unit files
+      command: "fleetctl stop {{ item | basename }}"
+      with_fileglob:
+        - units/*
+
     - name: Destroy existing base unit files
       command: "fleetctl destroy {{ item | basename }}"
       with_fileglob:
         - units/*
-      args:
-        chdir: /home/core/units
 
 - name: Cleanup all docker containers in cluster
   hosts: coreos
@@ -45,9 +50,9 @@
       args:
         chdir: /home/core/units
 
-    - name: Spin up instances
-      command: "fleetctl start {{ item | basename }}"
-      with_fileglob:
-        - units/*
-      args:
-        chdir: /home/core/units
+    #- name: Spin up instances
+    #  command: "fleetctl --debug=true start {{ item | basename }}"
+    #  with_fileglob:
+    #    - units/*
+    #  args:
+    #    chdir: /home/core/units

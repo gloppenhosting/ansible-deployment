@@ -3,5 +3,11 @@ echo "Kill all containers"
 docker kill $(docker ps -a -q)
 echo "Removing all containers"
 docker rm $(docker ps -a -q)
+
+docker ps -f status=exited -q | xargs -r docker rm
+docker images -f dangling=true -q | xargs -r docker rmi
+docker images | xargs -r docker rmi
+docker images | awk {'print $3'} | grep -v IMAGE | xargs -r docker rmi -f
+
 echo "Restarting docker service"
 systemctl restart docker

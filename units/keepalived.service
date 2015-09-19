@@ -4,19 +4,16 @@ After=kamailio.service
 Requires=kamailio.service
 
 [Service]
-TimeoutStartSec=0
 Restart=always
+RestartSec=15s
+TimeoutStartSec=0
+
 ExecStartPre=-/usr/bin/docker kill keepalived
 ExecStartPre=-/usr/bin/docker rm keepalived
 ExecStartPre=/usr/bin/docker pull gloppenhosting/keepalived
 ExecStartPre=/bin/sh -c "/usr/sbin/sysctl -w net.ipv4.ip_nonlocal_bind=1"
-ExecStart=/bin/sh -c "/usr/bin/docker run \
-    -v /etc/keepalived/keepalived.conf:/etc/keepalived/keepalived.conf \
-    --name=keepalived \
-    --privileged=true \
-    --net=host \
-    -t gloppenhosting/keepalived \
-    /usr/sbin/keepalived -f /etc/keepalived/keepalived.conf --dont-fork --log-console"
+ExecStartPre=/bin/sh -c "/usr/sbin/modprobe ip_vs"
+ExecStart=/bin/sh -c "/usr/bin/docker run --name=keepalived --privileged=true --net=host -e KEEPALIVED_INTERFACE={{ ansible_default_ipv4.interface }} -e KEEPALIVED_PRIORITY=100 -e KEEPALIVED_PEER=$(ifconfig | grep -A1 {{ ansible_default_ipv4.interface }} | grep -v {{ ansible_default_ipv4.interface }} | awk '{print $2}') -e KEEPALIVED_VIRTUAL_IP={{ floating_ip }} -e KEEPALIVED_PASSWORD={{ keepalived_password }} -t gloppenhosting/keepalived"
 ExecStop=/usr/bin/docker stop keepalived
 
 [X-Fleet]

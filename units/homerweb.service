@@ -1,11 +1,13 @@
 [Unit]
 Description=Announce Homer IP
-Requires=captureserver.service
+BindsTo=captureserver.service
 After=captureserver.service
 
 [Service]
-TimeoutStartSec=45
 Restart=always
+RestartSec=15s
+TimeoutStartSec=0
+
 ExecStartPre=-/usr/bin/docker kill homerweb
 ExecStartPre=-/usr/bin/docker rm homerweb
 ExecStartPre=/usr/bin/docker pull gloppenhosting/homer-webapp

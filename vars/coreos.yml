@@ -1,4 +1,4 @@
-coreos_discovery: https://discovery.etcd.io/fe6ab851fe91062cd8f0a31f4ae42233
+coreos_discovery: https://discovery.etcd.io/9271743137c34c909b491cc95b7d8607
 floating_ip: "172.16.50.5"
 keepalived_password: "ixt6m8hKzPs2eAcD"
 public_ssh_keys:
