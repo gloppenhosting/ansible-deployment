@@ -1,7 +1,7 @@
 [Unit]
 Description=keepalived
 After=kamailio.service
-Requires=kamailio.service
+Wants=kamailio.service
 
 [Service]
 Restart=always

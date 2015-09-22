@@ -1,16 +1,16 @@
 [Unit]
 Description=HomerCaptureServer
-BindsTo=mysql.service
+Wants=mysql.service
 After=mysql.service
 
 [Service]
 Restart=always
 RestartSec=15s
-TimeoutStartSec=0
+TimeoutStartSec=15s
 
 ExecStartPre=-/usr/bin/docker kill captureserver
 ExecStartPre=-/usr/bin/docker rm captureserver
-ExecStartPre=-/usr/bin/docker run --name loaddata --link mysql:mysql -e MYSQL_ROOT_PASSWORD=secret -t gloppenhosting/homer-loaddata /bin/bash /load_data.sh
+ExecStartPre=-/usr/bin/docker run --name loaddata --link mysql:mysql -e MYSQL_ROOT_PASSWORD=secret -t gloppenhosting/homer-loaddata
 ExecStartPre=-/usr/bin/docker kill loaddata
 ExecStartPre=-/usr/bin/docker rm loaddata
 ExecStartPre=/usr/bin/docker pull gloppenhosting/captureserver

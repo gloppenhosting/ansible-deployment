@@ -1,0 +1,19 @@
+[Unit]
+Description=Websocket Proxy for Asterisk
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=always
+RestartSec=15s
+TimeoutStartSec=0
+
+ExecStartPre=-/usr/bin/docker kill websocket-proxy
+ExecStartPre=-/usr/bin/docker rm websocket-proxy
+ExecStartPre=/usr/bin/docker pull gloppenhosting/websocket-proxy
+ExecStart=/usr/bin/docker run --name websocket-proxy -p 8089:8089 -p 1936:1936 -t gloppenhosting/websocket-proxy
+ExecStop=/usr/bin/docker stop websocket-proxy
+
+[X-Fleet]
+MachineMetadata=boxrole=kamailio
+Global=True

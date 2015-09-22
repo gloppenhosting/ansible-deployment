@@ -1,0 +1,16 @@
+[Unit]
+Description=HAProxy Announce IP
+Wants=asterisk.service
+After=asterisk.service
+
+[Service]
+Restart=always
+RestartSec=15s
+TimeoutStartSec=0
+
+ExecStart=/bin/sh -c "while true; do etcdctl set /haproxy/asterisk/$(cat /etc/machine-id) $(ifconfig | grep -A1 {{ ansible_default_ipv4.interface }} | grep -v {{ ansible_default_ipv4.interface }} | awk '{print $2}') --ttl 60; sleep 45; done"
+ExecStop=/usr/bin/etcdctl rm /haproxy/asterisk/$(cat /etc/machine-id)
+
+[X-Fleet]
+MachineMetadata=boxrole=asterisk
+Global=True

@@ -50,9 +50,9 @@
       args:
         chdir: /home/core/units
 
-    #- name: Spin up instances
-    #  command: "fleetctl --debug=true start {{ item | basename }}"
-    #  with_fileglob:
-    #    - units/*
-    #  args:
-    #    chdir: /home/core/units
+    - name: Spin up instances
+      command: "fleetctl --debug=true start {{ item | basename }}"
+      with_fileglob:
+        - units/*
+      args:
+        chdir: /home/core/units

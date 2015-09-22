@@ -1,0 +1,21 @@
+[Unit]
+Description=Announcer
+After=asterisk.service
+Requires=asterisk.service
+After=dispatcher.service
+Requires=dispatcher.service
+
+[Service]
+Restart=always
+RestartSec=15s
+TimeoutStartSec=0
+
+ExecStartPre=-/usr/bin/docker kill galera-seed
+ExecStartPre=-/usr/bin/docker rm galera-seed
+ExecStartPre=/usr/bin/docker pull sttts/galera-mariadb-10.0-xtrabackup
+ExecStart=docker run --name galera-seed -v /data:/var/lib/mysql -p 3306 -p 8080 -e XTRABACKUP_PASSWORD=abc -e MYSQL_ROOT_PASSWORD=secret sttts/galera-mariadb-10.0-xtrabackup seed
+ExecStop=/usr/bin/docker stop galera-seed
+
+[X-Fleet]
+MachineMetadata=boxrole=leader
+Global=True

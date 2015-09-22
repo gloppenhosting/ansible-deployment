@@ -1,7 +1,7 @@
 [Unit]
 Description=Dispatcher
 After=kamailio.service
-Requires=kamailio.service
+Wants=kamailio.service
 
 [Service]
 Restart=always
@@ -11,7 +11,7 @@ TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill dispatcher
 ExecStartPre=-/usr/bin/docker rm dispatcher
 ExecStartPre=/usr/bin/docker pull gloppenhosting/kamailio-etcd-dispatcher
-ExecStart=/usr/bin/docker run --name dispatcher --volumes-from kamailio -t gloppenhosting/kamailio-etcd-dispatcher
+ExecStart=/usr/bin/docker run --name dispatcher --volumes-from kamailio -t gloppenhosting/kamailio-etcd-dispatcher --etcdhost 172.17.42.1
 ExecStop=/usr/bin/docker stop dispatcher
 
 [X-Fleet]

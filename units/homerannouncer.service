@@ -1,6 +1,6 @@
 [Unit]
 Description=Announce Homer IP
-BindsTo=captureserver.service
+Wants=captureserver.service
 After=captureserver.service
 
 [Service]
